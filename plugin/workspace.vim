@@ -114,7 +114,7 @@ endfunction
 function! s:ToggleWorkspace()
   if s:WorkspaceExists()
     call s:RemoveWorkspace()
-    execute printf('silent !rm -rf %s', g:workspace_undodir)
+    execute printf('silent !rm -rf %s', s:GetUndoDir())
     call feedkeys("") | silent! redraw!  " Recover view from external comand
     echo 'Workspace removed!'
   else
@@ -235,12 +235,21 @@ function! s:ToggleAutosave()
   endif
 endfunction
 
+function! s:GetUndoDir()
+  if s:IsSessionDirectoryUsed()
+    return s:GetSessionDirectoryPath() . g:workspace_undodir
+  else
+    return g:workspace_undodir
+  endif
+endfunction
+
 function! s:SetUndoDir()
   if g:workspace_persist_undo_history
-    if !isdirectory(g:workspace_undodir)
-      call mkdir(g:workspace_undodir)
+    let l:undodir=s:GetUndoDir()
+    if !isdirectory(l:undodir)
+      call mkdir(l:undodir)
     endif
-    execute 'set undodir=' . resolve(g:workspace_undodir)
+    execute 'set undodir=' . resolve(l:undodir)
     set undofile
   endif
 endfunction
