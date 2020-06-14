@@ -30,6 +30,7 @@ function! s:GetSessionDirectoryPath()
   if has('win32')
     let l:fileName = substitute(l:cwd, '\', '%', 'g')
     let l:fileName = substitute(l:fileName, ':', '%', 'g')
+    let l:fileName = substitute(l:fileName, ' ', '%', 'g')
   else
     let l:fileName = substitute(l:cwd, '/', '%', 'g')
   endif
@@ -114,7 +115,7 @@ endfunction
 function! s:ToggleWorkspace()
   if s:WorkspaceExists()
     call s:RemoveWorkspace()
-    execute printf('silent !rm -rf %s', s:GetUndoDir())
+    execute printf('silent !rm -rf "%s"', s:GetUndoDir())
     call feedkeys("") | silent! redraw!  " Recover view from external comand
     echo 'Workspace removed!'
   else
@@ -245,11 +246,11 @@ endfunction
 
 function! s:SetUndoDir()
   if g:workspace_persist_undo_history
-    let l:undodir=s:GetUndoDir()
+    let l:undodir = s:GetUndoDir()
     if !isdirectory(l:undodir)
       call mkdir(l:undodir)
     endif
-    execute 'set undodir=' . resolve(l:undodir)
+    execute 'set undodir="' . resolve(l:undodir) . '"' 
     set undofile
   endif
 endfunction
