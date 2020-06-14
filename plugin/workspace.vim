@@ -27,7 +27,12 @@ function! s:GetSessionDirectoryPath()
     call mkdir(g:workspace_session_directory)
   endif
   let l:cwd = getcwd()
-  let l:fileName = substitute(l:cwd, '/', '%', 'g')
+  if has('win32')
+    let l:fileName = substitute(l:cwd, '\', '%', 'g')
+    let l:fileName = substitute(l:fileName, ':', '%', 'g')
+  else
+    let l:fileName = substitute(l:cwd, '/', '%', 'g')
+  endif
   let l:fullPath = g:workspace_session_directory . l:fileName
   return l:fullPath
 endfunction
