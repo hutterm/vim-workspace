@@ -106,7 +106,11 @@ endfunction
 
 function! s:RemoveWorkspace()
   let s:workspace_save_session  = 0
-  execute printf('call delete("%s")', s:GetSessionName())
+  if has('win32')
+    execute printf('silent !del /q "%s"', s:GetUndoDir())
+  else
+    execute printf('call delete("%s")', s:GetSessionName())
+  endif
   if !g:workspace_autosave_always
     call s:SetAutosave(0)
   endif
@@ -115,7 +119,11 @@ endfunction
 function! s:ToggleWorkspace()
   if s:WorkspaceExists()
     call s:RemoveWorkspace()
-    execute printf('silent !rm -rf "%s"', s:GetUndoDir())
+    if has('win32')
+      execute printf('silent !rd /s /q "%s"', s:GetUndoDir())
+    else
+      execute printf('silent !rm -rf "%s"', s:GetUndoDir())
+    endif
     call feedkeys("") | silent! redraw!  " Recover view from external comand
     echo 'Workspace removed!'
   else
