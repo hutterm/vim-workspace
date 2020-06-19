@@ -28,11 +28,12 @@ function! s:GetSessionDirectoryPath()
   endif
   let l:cwd = getcwd()
   if has('win32')
-    let l:fileName = substitute(l:cwd, '\', '%', 'g')
-    let l:fileName = substitute(l:fileName, ':', '%', 'g')
-    let l:fileName = substitute(l:fileName, ' ', '%', 'g')
+    let l:fileName = substitute(l:cwd, '\', '_', 'g')
+    let l:fileName = substitute(l:fileName, ':', '_', 'g')
+    let l:fileName = substitute(l:fileName, ' ', '_', 'g')
+	let l:fileName = substitute(l:fileName, '%', '_', 'g')
   else
-    let l:fileName = substitute(l:cwd, '/', '%', 'g')
+    let l:fileName = substitute(l:cwd, '/', '_', 'g')
   endif
   let l:fullPath = g:workspace_session_directory . l:fileName
   return l:fullPath
@@ -107,7 +108,7 @@ endfunction
 function! s:RemoveWorkspace()
   let s:workspace_save_session  = 0
   if has('win32')
-    execute printf('silent !del /q "%s"', s:GetUndoDir())
+    execute printf('silent !del /q "%s"', s:GetSessionName())
   else
     execute printf('call delete("%s")', s:GetSessionName())
   endif
